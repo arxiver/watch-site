@@ -1,5 +1,9 @@
+# Watch-site
+ Watch site is an uptime monitoring RESTful API server that allows authenticated users to monitor URLs, and get detailed uptime reports about their availability, average response time, and total uptime/downtime in a given period of time.
 
-## Description
+
+
+## Stack
 
 - Backend Framework: NodeJS
 - Language: TypeScript
@@ -24,6 +28,11 @@
 ### Context:
 
 VISIT [TASK.md](./TASK.md) FOR MORE DETAILS
+
+
+## System design diagram
+
+![system-design](./assets/design.png)
 
 ## Installation
 
