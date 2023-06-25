@@ -19,16 +19,17 @@ services:
     depends_on:
       - mongodb
     environment:
-      DB_URL: root:toor@localhost
+      DB_URL: mongodb://admin:password@mongodb:27017/test?authSource=admin
       DB_NAME: server
       ENV: dev
 
   mongodb:
-    image: mongo:5.0.0
+    image: mongo:latest
     container_name: server-mongodb
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=toor
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=test
     networks:
       - server-network
     ports:
@@ -38,6 +39,5 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    restart: unless-stopped
 networks:
   server-network:
