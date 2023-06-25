@@ -2,16 +2,6 @@
  Watch site is an uptime monitoring RESTful API server that allows authenticated users to monitor URLs, and get detailed uptime reports about their availability, average response time, and total uptime/downtime in a given period of time.
 
 
-
-## Stack
-
-- Backend Framework: NodeJS
-- Language: TypeScript
-- Server Framework: NestJS
-- Database: PostgreSQL
-- Testing Framework: JestJS
-- API Documentation: Swagger
-
 <!-- 
 - Functions documentations:
 ```ts
@@ -88,3 +78,19 @@ $ npm run test
 # test coverage
 $ npm run test:cov
 ```
+
+## Stack
+
+- Backend Framework: NodeJS (v18)
+- Language: TypeScript
+- Server Framework: NestJS
+- Database: PostgreSQL
+- Testing Framework: JestJS
+- API Documentation: Swagger
+
+
+## TODO
+
+- [ ] Dockerization
+- [ ] unit testing
+- [ ] e2e testing
