@@ -16,6 +16,7 @@ async function bootstrap() {
 
  // log PORT and mode
  Logger.log(`Running in ${process.env.NODE_ENV} mode on port ${process.env.PORT}`, 'Bootsrap');
+ Logger.log(`Running in DB ${process.env.DB_URL} on name ${process.env.DB_NAME}`, 'DB');
 
  // create app
  const app = await NestFactory.create(AppModule);

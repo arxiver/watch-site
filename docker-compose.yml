@@ -20,7 +20,7 @@ services:
       - mongodb
     environment:
       DB_URL: mongodb://admin:password@mongodb:27017/test?authSource=admin
-      DB_NAME: server
+      DB_NAME: test
       ENV: dev
 
   mongodb:
