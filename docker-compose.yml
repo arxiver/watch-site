@@ -5,7 +5,7 @@ services:
     image: mongo:latest
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: proot
+      MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - "27017:27017"
     volumes:
@@ -19,12 +19,14 @@ services:
       - "3000:3000"
     environment:
       DB_USERNAME: root
-      DB_PASSWORD: proot
-      DB_DATABASE: server_db
+      DB_PASSWORD: example
+      DB_NAME: mydb
       DB_HOST: mongodb
-      DB_URL: mongodb://root:proot@0.0.0.0:27017/server_db?authSource=admin
+      DB_URL: mongodb://root:example@0.0.0.0:27017/mydb?authSource=admin
     depends_on:
       - mongodb
+    volumes:
+      - .:/app
     networks:
       - app-network
 
