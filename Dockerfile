@@ -21,7 +21,7 @@ ENV DB_USERNAME=root
 ENV DB_PASSWORD=proot
 ENV DB_HOST=0.0.0.0:27017
 ENV DB_NAME=server_db
-ENV DB_URL=mongodb://root:proot@mongo:27017/server_db?authSource=admin
+ENV DB_URL=mongodb://root:proot@0.0.0.0:27017/server_db?authSource=admin
 
 # Start the app
 CMD ["npm", "run", "start:dev"]
