@@ -23,4 +23,5 @@ ENV MONGO_DB_DATABASE=server_db
 ENV MONGO_DB_HOST=0.0.0.0:27017
 
 # Start the app
+RUN npm run build
 CMD ["npm", "run", "start:prod"]
