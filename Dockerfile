@@ -17,11 +17,11 @@ COPY . .
 EXPOSE 3000
 
 # Set the environment variables for the MongoDB connection
-ENV MONGO_DB_USERNAME=root
-ENV MONGO_DB_PASSWORD=proot
-ENV MONGO_DB_DATABASE=server_db
-ENV MONGO_DB_HOST=0.0.0.0:27017
+ENV DB_USERNAME=root
+ENV DB_PASSWORD=proot
+ENV DB_HOST=0.0.0.0:27017
+ENV DB_NAME=server_db
+ENV DB_URL=mongodb://root:proot@mongo:27017/server_db?authSource=admin
 
 # Start the app
-RUN npm run build
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "run", "start:dev"]
