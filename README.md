@@ -12,7 +12,7 @@
 - Testing Framework: JestJS
 - API Documentation: Swagger
 
-
+<!-- 
 - Functions documentations:
 ```ts
 /** Does something interesting
@@ -23,7 +23,7 @@
 * @throws Some_Exception_Class If something interesting cannot happen
 * @return Status
 */
-```
+``` -->
 
 ### Context:
 
