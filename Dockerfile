@@ -18,11 +18,10 @@ EXPOSE 3000
 
 # Set the environment variables for the MongoDB connection
 ENV DB_USERNAME=root
-ENV DB_PASSWORD=example
-ENV DB_HOST=0.0.0.0
+ENV DB_PASSWORD=proot
+ENV DB_HOST=0.0.0.0:27017
 ENV DB_NAME=server_db
-ENV DB_PORT=27017
-ENV DB_URL=mongodb://root:example@0.0.0.0:27017/server_db?authSource=admin
+ENV DB_URL=mongodb://root:proot@0.0.0.0:27017/server_db?authSource=admin
 
 # Start the app
 CMD ["npm", "run", "start:dev"]

@@ -22,7 +22,7 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: proot
       BD_NAME: server_db
-      DB_HOST: mongodb
+      DB_HOST: "0.0.0.0"
       DB_URL: mongodb://root:proot@0.0.0.0:27017/server_db?authSource=admin
     depends_on:
       - mongodb
