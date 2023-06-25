@@ -5,8 +5,7 @@ WORKDIR /usr/src/app
 #  Copy package.json
 COPY package*.json ./
 
-RUN npm install glob rimraf
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY . .
 
 # Expose the port that the app will run on (replace 3000 with your app's actual port number)
