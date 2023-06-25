@@ -1,30 +1,31 @@
 version: '3'
+
 services:
-  db:
-    image: mongo
-    restart: always
+  mongodb:
+    image: mongo:latest
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    volumes:
-      - ./data:/data/db
+      MONGO_INITDB_ROOT_PASSWORD: proot
     ports:
       - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    networks:
+      - app-network
 
   app:
     build: .
-    command: nest start:prod --watch
-    volumes:
-      - .:/app
     ports:
       - "3000:3000"
-    depends_on:
-      - db
     environment:
-      - DB_NAME=watch-site
-      - DB_URL=mongodb://root:example@db:27017/nest?authSource=admin&authMechanism=SCRAM-SHA-1
-      - DB_PORT=27017
-      - DB_USERNAME=root
-      - DB_PASSWORD=example
-volumes:
-  data: {}
+      DB_USERNAME: root
+      DB_PASSWORD: proot
+      DB_DATABASE: server_db
+      DB_HOST: mongodb
+      DB_URL: mongodb://root:proot@mongodb:27017/server_db
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+networks:
