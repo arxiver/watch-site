@@ -1,34 +1,42 @@
-version: '3'
-
+version: '3.9'
 services:
-  mongodb:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: proot
+  dev:
+    container_name: server-dev
+    image: server-dev:1.0.0
+    build:
+      context: .
+      target: development
+      dockerfile: ./Dockerfile
+    command: npm run start:debug
     ports:
-      - "27017:27017"
-    volumes:
-      - ./data:/data/db
+      - 3000:3000
+      - 9229:9229
     networks:
-      - app-network
+      - server-network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     restart: unless-stopped
-    
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      DB_USERNAME: root
-      DB_PASSWORD: proot
-      BD_NAME: server_db
-      DB_HOST: "0.0.0.0"
-      DB_URL: mongodb://root:proot@0.0.0.0:27017/server_db?authSource=admin
     depends_on:
       - mongodb
-    networks:
-      - app-network
+    environment:
+      MONGO_URL: root:toor@localhost
 
+  mongodb:
+    image: mongo:5.0.0
+    container_name: server-mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=toor
+    networks:
+      - server-network
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
 networks:
-  app-network:
-    driver: bridge
+  server-network:
