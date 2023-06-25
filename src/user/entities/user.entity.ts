@@ -3,7 +3,7 @@ import { IsArray, IsEmail, IsNotEmpty } from 'class-validator';
 
 @Entity()
 export class User {
- @ObjectIdColumn()
+ @ObjectIdColumn({ name: '_id' })
  _id: ObjectId;
 
  @Column()

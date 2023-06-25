@@ -4,6 +4,7 @@ import { Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
+import * as fs from 'fs';
 
 async function bootstrap() {
  // check NODE_ENV
@@ -21,7 +22,7 @@ async function bootstrap() {
 
  // swagger
  const config = new DocumentBuilder()
-  .setTitle('Server API')
+  .setTitle('WATCH-SITE Server API')
   .setDescription('RESTFUL Backend server')
   .setVersion('1.0')
   .addBearerAuth()
@@ -29,6 +30,8 @@ async function bootstrap() {
 
  const document = SwaggerModule.createDocument(app, config);
  SwaggerModule.setup('api', app, document);
+ 
+ fs.writeFileSync("./swagger-spec.json", JSON.stringify(document));
 
  // error handling
  useContainer(app.select(AppModule), { fallbackOnErrors: true });

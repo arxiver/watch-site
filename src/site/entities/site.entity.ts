@@ -8,7 +8,6 @@ import {
  IsArray,
  ValidateNested,
  IsBoolean,
- IsObject,
 } from 'class-validator';
 
 export enum Protocol {
@@ -20,10 +19,10 @@ export enum Protocol {
 @Entity()
 @Index(['url'])
 export class Site {
- @ObjectIdColumn()
+ @ObjectIdColumn({name: '_id'})
  _id: ObjectId;
 
- @ObjectIdColumn()
+ @ObjectIdColumn({name: 'userId'})
  userId?: ObjectId;
 
  @Column()
@@ -115,6 +114,6 @@ export class Site {
  @IsNumber()
  updatedAt?: number | Date;
 
- @ObjectIdColumn()
+ @ObjectIdColumn({name: 'reportId'})
  reportId?: ObjectId;
 }

@@ -1,6 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { CreateSiteReportDto } from './dto/create-site-report.dto';
-import { UpdateSiteReportDto } from './dto/update-site-report.dto';
+import { Injectable, Logger } from '@nestjs/common';
 import { SiteReport } from './entities/site-report.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
@@ -11,19 +9,25 @@ import { MailService } from 'src/mail/mail.service';
 import { UserService } from 'src/user/user.service';
 import { UpdateSiteDto } from 'src/site/dto/update-site.dto';
 import { CreateSiteDto } from 'src/site/dto/create-site.dto';
+import { SiteService } from 'src/site/site.service';
+import { TaskService } from 'src/tasks/tasks.service';
+
+const MAX_HISTORY_SIZE = 500;
+const MAX_SITES_LOAD = 1000;
 
 @Injectable()
 export class SiteReportService {
+  private readonly logger = new Logger(SiteReportService.name);
   constructor(
     @InjectRepository(SiteReport)
     private readonly siteReportRepository: Repository<SiteReport>,
-    @InjectRepository(Site)
-    private readonly siteRepository: Repository<Site>,
+    private readonly siteSerivce: SiteService,
     private readonly mailService: MailService,
     private readonly userService: UserService,
     private readonly httpService: HttpService,
+    private readonly taskService: TaskService,
   ) { }
-  create(createSiteReportDto: CreateSiteReportDto) {
+  create(createSiteReportDto: SiteReport) {
     return this.siteReportRepository.save(createSiteReportDto);
   }
 
@@ -36,14 +40,14 @@ export class SiteReportService {
   }
 
   findOneBySiteId(id: ObjectId) {
-    return this.siteReportRepository.findOneBy({ siteId: id });
+    return this.siteReportRepository.findOne({where: { siteId: id }});
   }
 
   findOneBy(findOneOpts?: FindOneOptions<SiteReport>) {
     return this.siteReportRepository.findOne(findOneOpts);
   }
 
-  async update(id: ObjectId, updateSiteReportDto: UpdateSiteReportDto) {
+  async update(id: ObjectId, updateSiteReportDto: SiteReport) {
     const siteReport = await this.siteReportRepository.findOneBy({ _id: id });
     const updated = await this.siteReportRepository
       .update(id, { ...siteReport, ...updateSiteReportDto, _id: id })
@@ -60,6 +64,28 @@ export class SiteReportService {
   }
 
 
+  async bootload() {
+    const sitesCount = await this.siteSerivce.findCount();
+    this.logger.log(`Bootloading sites ${sitesCount}`);
+    for (let i = 0; i < sitesCount; i += 1000) {
+      const sites = await this.siteSerivce.findAllRoot({
+        take: 1000,
+        skip: i,
+      });
+      await this.bootloadSites(sites);
+    }
+  }
+
+  bootloadSites = async (sites: Site[]) => {
+    sites.forEach(async (site) => {
+      const siteReport = await this.findOneBySiteId(site._id);
+      if (!siteReport) {
+        await this.createSiteReport(site._id, site.userId);
+      }
+      this.taskService.create(site._id.toString(), site.interval,
+        this.siteCheckCallback.bind(this, site._id));
+    });
+  }
   /*
     _   _ _____ ___ _     ____  
   | | | |_   _|_ _| |   / ___| 
@@ -69,12 +95,14 @@ export class SiteReportService {
                                
   */
 
-  siteCheckCallback = async (siteId: ObjectId, userId?: ObjectId) => {
+  siteCheckCallback = async (siteId: ObjectId) => {
     // Get the site
-    const site = await this.siteRepository.findOneBy({ _id: siteId });
-    const siteReport = await this.findOneBySiteId(siteId);
-    // console.log(site);
-    if (!siteReport) { console.log("Site report not found"); return };
+    const site = await this.siteSerivce.findOneRoot(siteId);
+    if (!site || site.deleted) { this.taskService.remove(siteId.toString()); return };
+
+    // Get the site report
+    let siteReport = await this.findOneById(site.reportId);
+    if (!siteReport) { siteReport = await this.createSiteReport(siteId, site.userId); };
 
     // Site check
     const url = this.parseSiteURL(site);
@@ -102,7 +130,7 @@ export class SiteReportService {
       siteReport.outages += 1;
       if (siteReport.outages >= site.threshold) {
         // Send notification
-        const notified = this.notifyDown(site, userId);
+        const notified = this.notifyDown(site);
         if (notified) siteReport.outages = 0;
       }
     }
@@ -111,24 +139,21 @@ export class SiteReportService {
     if (!Array.isArray(siteReport.history))
       siteReport.history = [{ at: siteReport.updatedAt, status: siteReport.status }];
     else {
-      if (siteReport.history[siteReport.history.length - 1].status !== siteReport.status
+      if (siteReport.history.length > 0 &&
+        siteReport.history[siteReport.history.length - 1].status !== siteReport.status
         && siteReport.status === "UP") {
         // Send notification
-        const notified = this.notifyUp(site, userId);
+        const notified = this.notifyUp(site);
         if (notified) siteReport.outages = 0;
       }
       siteReport.history.push({ at: siteReport.updatedAt, status: siteReport.status });
     }
-
+    if (siteReport.history.length > MAX_HISTORY_SIZE) siteReport.history.shift();
     siteReport.availability = (siteReport.uptime / (siteReport.uptime + siteReport.downtime) * 100);
 
     // Update the site report
     siteReport.updatedAt = new Date();
-    siteReport.siteId = site._id;
-    siteReport.userId = userId;
-    const siteReportUpdated = await this.update(siteReport._id, siteReport);
-    console.log(siteReportUpdated);
-    return siteReport;
+    return await this.update(siteReport._id, siteReport);
   }
 
   async doRequest(url: string, site: Site, headersObject: {}) {
@@ -154,6 +179,10 @@ export class SiteReportService {
       downtime: 0,
       uptime: 0,
       responseTime: 0,
+      history: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
     });
     return siteReport;
   }
@@ -176,9 +205,12 @@ export class SiteReportService {
     return url;
   }
 
-  async notifyDown(site: Site, userId: ObjectId) {
+  async notifyDown(site: Site) {
     // Call of the proposed notifications services here
-    const user = await this.userService.findOne(userId);
+    const user = await this.userService.findOne(site.userId);
+    if (site.webhook) {
+      await this.httpService.get(site.webhook).toPromise();
+    }
     try {
       await this.mailService.sendDownSiteEmail(user.name, user.email, site.name, site.url);
       return true;
@@ -187,9 +219,9 @@ export class SiteReportService {
     }
   }
 
-  async notifyUp(site: Site, userId: ObjectId) {
+  async notifyUp(site: Site) {
     // Call of the proposed notifications services here
-    const user = await this.userService.findOne(userId);
+    const user = await this.userService.findOne(site.userId);
     try {
       await this.mailService.sendUpSiteEmail(user.name, user.email, site.name, site.url);
       return true;

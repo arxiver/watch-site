@@ -12,9 +12,10 @@ import { SiteReportModule } from './site-report/site-report.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskService } from './tasks/tasks.service';
 import { BootloaderService } from './bootloader/bootloader.service';
-import { Type } from 'class-transformer';
 import { Site } from './site/entities/site.entity';
 import { SiteReportService } from './site-report/site-report.service';
+import { SiteReport } from './site-report/entities/site-report.entity';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
  imports: [
@@ -34,15 +35,16 @@ import { SiteReportService } from './site-report/site-report.service';
    }),
    inject: [ConfigService],
   }),
-  TypeOrmModule.forFeature([Site]),
+  TypeOrmModule.forFeature([Site, SiteReport]),
   JwtModule.registerAsync(JWTConfig()),
   MailModule,
   UserModule,
   SiteModule,
   SiteReportModule,
+  HttpModule,
  ],
  controllers: [AppController],
- providers: [BootloaderService, AppService, TaskService, SiteReportService, BootloaderService],
+ providers: [AppService, TaskService, SiteReportService, BootloaderService],
 })
 export class AppModule {}
 

@@ -7,10 +7,10 @@ export class TaskService {
  private readonly schedulerRegistry: SchedulerRegistry = new SchedulerRegistry();
 
  async create(name: string, mins: number, callback: () => void) {
-  const interval = setInterval(callback, mins * 1000);
+  const interval = setInterval(callback, mins * 1000 * 60);
   this.schedulerRegistry.addInterval(name, interval);
 
-  this.logger.warn(`job ${name} added for each minute at ${mins} seconds!`);
+  this.logger.log(`job id: ${name} each minute at ${mins} mins!`);
  }
 
  remove(name: string) {

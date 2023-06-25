@@ -157,7 +157,6 @@ export class UserService {
  async confirm(token: string) {
   try {
    const payload = await this.jwtService.verifyAsync(token);
-   console.log(payload);
    const user = await this.findOne(toObjectId(payload.sub));
    if (!user) {
     throw new UnauthorizedException();

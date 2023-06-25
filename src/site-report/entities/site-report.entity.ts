@@ -3,9 +3,9 @@ import { Column, Entity, ObjectIdColumn } from 'typeorm';
 
 @Entity()
 export class SiteReport {
-  @ObjectIdColumn()
+  @ObjectIdColumn({name:"_id"})
   // The ID of the URL.
-  _id: ObjectId;
+  _id?: ObjectId;
 
   @Column({ default: 'UNKNOWN' })
   // The current status of the URL.
@@ -21,6 +21,7 @@ export class SiteReport {
 
   @Column({ default: 0 })
   // The total time, as counter, will be converted to seconds in reporting, of the URL downtime.
+  // Site interval * downtime = downtime in seconds
   downtime: number;
 
   @Column({ default: 0 })
@@ -35,13 +36,13 @@ export class SiteReport {
   // Timestamped logs of the polling requests.
   history: { at: Date, status: 'UP' | 'DOWN' }[];
 
-  @ObjectIdColumn()
+  @ObjectIdColumn({name:"userId"})
   // The ID of the user who owns the URL.
   userId: ObjectId;
 
-  @ObjectIdColumn()
+  @ObjectIdColumn({name:"siteId"})
   // The ID of the URL.
-  siteId: ObjectId;
+  siteId: ObjectId|string;
 
   @Column()
   // The timestamp of the URL creation.

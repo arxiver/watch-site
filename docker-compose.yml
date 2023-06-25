@@ -1,20 +1,19 @@
 version: '3'
 services:
   db:
-    image: postgres
+    image: mongo
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: example
-      POSTGRES_DB: mydb
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - ./data:/data/db
     ports:
-      - "5432:5432"
+      - "27017:27017"
 
   app:
     build: .
-    command: npm run start:dev
+    command: nest start:prod --watch
     volumes:
       - .:/app
     ports:
@@ -22,11 +21,10 @@ services:
     depends_on:
       - db
     environment:
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: example
-      POSTGRES_DB: mydb
-
+      - DB_NAME=watch-site
+      - DB_URL=mongodb://root:example@db:27017/nest?authSource=admin&authMechanism=SCRAM-SHA-1
+      - DB_PORT=27017
+      - DB_USERNAME=root
+      - DB_PASSWORD=example
 volumes:
-  postgres-data:
+  data: {}

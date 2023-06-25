@@ -67,21 +67,6 @@ export class UserController {
   }
  }
 
- /** Gets all users
-  *
-  * @return User[] The users
-  *
-  * @example
-  * const users = await getAllUsers();
-  * console.log(users); // [ { id: 1, name: 'John Doe', ... }, { id: 2, name: 'Jane Doe', ... } ]
-  */
- @ApiBearerAuth()
- @UseGuards(AuthGuard)
- @Get()
- findAll() {
-  return this.userService.findAll();
- }
-
  /** Gets a user by id
   *
   * @param string $id The id of the user

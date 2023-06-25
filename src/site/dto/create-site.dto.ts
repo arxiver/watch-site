@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUrl, IsEnum, IsOptional, IsNumber, IsArray, IsBoolean, Min } from 'class-validator';
+import { IsString, IsUrl, IsEnum, IsOptional, IsNumber, IsArray, IsBoolean, Min, Max } from 'class-validator';
 import { ObjectId } from 'typeorm';
 import { Protocol } from '../entities/site.entity';
 export class CreateSiteDto {
@@ -58,8 +58,8 @@ export class CreateSiteDto {
   description: 'The time interval (minutes) for polling requests. (min: 5 mins)',
  })
  @IsOptional()
-//  @Min(5)
-// @Max(100)
+ @Min(5)
+ @Max(60*24*7)
  @IsNumber()
  interval?: number;
 

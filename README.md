@@ -27,12 +27,25 @@
 
 ### Context:
 
-VISIT [TASK.md](./TASK.md) FOR MORE DETAILS
+- [x] Signup with email verification. 
+- [x] CRUD operations for URL checks (`GET`, `PUT` and `DELETE` can be called only by the user user who created the check). 
+- Authenticated users can receive a notification whenever one of their URLs goes down or up again:
+  - Email.
+  - Webhook *(optional)*.
+- Authenticated users can get detailed uptime reports about their URLs availability, average response time, and total uptime/downtime.
+- Authenticated users can group their checks by tags and get reports by tag.
+
+VISIT: [TASK.md](./TASK.md) FOR MORE DETAILS
 
 
 ## System design diagram
 
 ![system-design](./assets/design.png)
+
+## API
+
+![api-docs](./assets/api.png)
+VISIT: [API.md](./API.md) FOR MORE DETAILS
 
 ## Installation
 
@@ -60,6 +73,10 @@ $ npm run start:prod
 ```
 
 ## Test
+
+#### Tests are not yet implemented but the test strategy is as follows:
+- Unit tests for all the services and controllers.
+- Create a mock-server for testing the DOWNS/UPS notifications.
 
 ```bash
 # unit tests
