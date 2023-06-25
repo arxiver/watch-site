@@ -62,11 +62,11 @@ export class SiteController {
   @UseGuards(AuthGuard)
   @Get('reports')
   async getReports(@User() userId: ObjectId) {
-    const reports = await this.siteReportService.findAll({ where: { userId: toObjectId(userId) } });
-    return reports.map(async (report) => {
-      await this.prepareSiteReport(report);
-      return report;
-    });
+    let reports = await this.siteReportService.findAll({ where: { userId: toObjectId(userId) } });
+    reports = await Promise.all(reports.map(async (report) => {
+      return this.prepareSiteReport(report);
+    }));
+    return reports;
   }
 
   @ApiBearerAuth()
@@ -109,7 +109,8 @@ export class SiteController {
 
   async prepareSiteReport(report: SiteReport) {
     const site = await this.siteService.findOneRoot(report.siteId as ObjectId);
-    report.downtime = report.downtime * site.interval;
-    report.uptime = report.uptime * site.interval;
+    report.downtime = report.downtime * site.interval * 60;
+    report.uptime = report.uptime * site.interval * 60;
+    return report;
   }
 }
