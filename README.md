@@ -45,6 +45,8 @@ VISIT: [TASK.md](./TASK.md) FOR MORE DETAILS
 ## API
 
 ![api-docs](./assets/api.png)
+
+<hr/>
 VISIT: [API.md](./API.md) FOR MORE DETAILS
 
 ## Installation
