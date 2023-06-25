@@ -34,8 +34,7 @@
   - [x] Webhook *(optional)*.
 - [x] Authenticated users can get detailed uptime reports about their URLs availability, average response time, and total uptime/downtime.
 
-VISIT: [TASK.md](./TASK.md) FOR MORE DETAILS
-
+**VISIT: [TASK.md](./TASK.md) FOR MORE DETAILS**
 
 ## System design diagram
 
@@ -46,7 +45,10 @@ VISIT: [TASK.md](./TASK.md) FOR MORE DETAILS
 ![api-docs](./assets/api.png)
 
 <hr/>
-VISIT: [API.md](./API.md) FOR MORE DETAILS
+
+
+**VISIT: [API.md](./API.md) FOR MORE DETAILS**
+
 
 ## Installation
 
