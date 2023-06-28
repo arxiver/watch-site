@@ -84,7 +84,7 @@ $ npm run test:cov
 - Backend Framework: NodeJS (v18)
 - Language: TypeScript
 - Server Framework: NestJS
-- Database: PostgreSQL
+- Database: Mongodb
 - Testing Framework: JestJS
 - API Documentation: Swagger
 
